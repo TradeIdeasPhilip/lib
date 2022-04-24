@@ -103,5 +103,7 @@ export function getAudioBalanceControl(audioElement: HTMLAudioElement) {
   // default pan set to 0 - center
   const stereoNode = new StereoPannerNode(audioContext, { pan: 0 });
   track.connect(stereoNode).connect(audioContext.destination);
-  return (balance: number) => (stereoNode.pan.value = balance);
+  return (balance: number) => {
+    stereoNode.pan.value = balance;
+  };
 }
