@@ -85,3 +85,23 @@ export function getBlobFromCanvas(canvas: HTMLCanvasElement): Promise<Blob> {
   });
   return promise;
 }
+
+/**
+ *
+ * @param audioElement The element to control.
+ * @returns A function which will control the balance for the given element.
+ * * An input of -1 means all left.
+ * * 0 means center / both.
+ * * 1 means all right.
+ * * Values between -1 and 1 are continuously interpolated.
+ */
+export function getAudioBalanceControl(audioElement: HTMLAudioElement) {
+  //https://stackoverflow.com/a/63193575/971955
+  const audioContext = new AudioContext();
+  // pass the audio element into the audio context
+  const track = audioContext.createMediaElementSource(audioElement);
+  // default pan set to 0 - center
+  const stereoNode = new StereoPannerNode(audioContext, { pan: 0 });
+  track.connect(stereoNode).connect(audioContext.destination);
+  return (balance: number) => (stereoNode.pan.value = balance);
+}
