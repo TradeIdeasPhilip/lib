@@ -31,7 +31,7 @@ export function testXml(xmlStr: string): XmlStatus {
   // says that parseFromString() will throw an error if the input is invalid.
   //
   // https://developer.mozilla.org/en-US/docs/Web/Guide/Parsing_and_serializing_XML
-  // says dom.documentElement.nodeName == "parsererror" will be true of the input
+  // says dom.documentElement.nodeName == "parsererror" will be true if the input
   // is invalid.
   //
   // Neither of those is true when I tested it in Chrome.  Nothing is thrown.
