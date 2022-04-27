@@ -209,29 +209,31 @@ export function sum(items: number[]): number {
 /**
  * For use with `makeLinear()`.
  */
- type LinearFunction = (x: number) => number;
+type LinearFunction = (x: number) => number;
 
- /**
-  * Linear interpolation and extrapolation.
-  *
-  * Given two points, this function will find the line that lines on those two points.
-  * And it will return a function that will find all points on that line.
-  * @param x1 One valid input.
-  * @param y1 The expected output at x1.
-  * @param x2 Another valid input.  Must differ from x2.
-  * @param y2 The expected output at x2.
-  * @returns A function of a line.  Give an x as input and it will return the expected y.
-  */
- export function makeLinear(
-   x1: number,
-   y1: number,
-   x2: number,
-   y2: number
- ): LinearFunction {
-   const slope = (y2 - y1) / (x2 - x1);
-   return function (x: number) {
-     return (x - x1) * slope + y1;
-   };
- }
- 
- 
+/**
+ * Linear interpolation and extrapolation.
+ *
+ * Given two points, this function will find the line that lines on those two points.
+ * And it will return a function that will find all points on that line.
+ * @param x1 One valid input.
+ * @param y1 The expected output at x1.
+ * @param x2 Another valid input.  Must differ from x2.
+ * @param y2 The expected output at x2.
+ * @returns A function of a line.  Give an x as input and it will return the expected y.
+ */
+export function makeLinear(
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number
+): LinearFunction {
+  const slope = (y2 - y1) / (x2 - x1);
+  return function (x: number) {
+    return (x - x1) * slope + y1;
+  };
+}
+
+export function polarToRectangular(r : number, θ : number) {
+  return { x :Math.sin(θ) * r, y : Math.cos(θ) * r};
+}
