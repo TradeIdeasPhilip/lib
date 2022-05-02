@@ -202,6 +202,20 @@ export function* count(start = 0, end = Infinity, step = 1) {
   }
 }
 
+/**
+ * Create and initialize an array.
+ * @param count The number of items in the array.
+ * @param callback A function which will take the (zero based) array index as an input and will return the value to put into the array at that index.
+ * @returns An array containing all of the results.
+ */
+export function countMap<T>(count : number, callback :(index : number) => T) : T[] {
+  const result : T[] = [];
+  for (let i = 0; i < count; i++) {
+    result.push(callback(i));
+  }
+  return result;
+}
+
 export function sum(items: number[]): number {
   return items.reduce((accumulator, current) => accumulator + current, 0);
 }
