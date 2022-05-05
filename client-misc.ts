@@ -107,3 +107,27 @@ export function getAudioBalanceControl(audioElement: HTMLAudioElement) {
     stereoNode.pan.value = balance;
   };
 }
+
+/**
+ * Reads the hash (a.k.a the fragment) associated with the current url and
+ * parses it like a url query string.  E.g. key1=value1&key2=value2.
+ * 
+ * Keys and values are both decoded by normal url rules.
+ * 
+ * I explicitly allow + to be converted to space.  These might be written by hand
+ * and + is convenient for that.
+ */
+export function getHashInfo() : Map<string, string> {
+  const result = new Map<string, string>();
+  const hashString = /^#?(.*)$/.exec(location.hash.replace("+", "%20"))![1];
+  const pairs = hashString.split("&");
+  pairs.forEach(pair => {
+    const kvp = pair.split("=", 2);
+    if (kvp.length == 2) {
+      const key = decodeURIComponent(kvp[0]);
+      const value = decodeURIComponent(kvp[1]);
+      result.set(key, value);
+    }
+  });
+  return result;
+}
