@@ -208,8 +208,8 @@ export function* count(start = 0, end = Infinity, step = 1) {
  * @param callback A function which will take the (zero based) array index as an input and will return the value to put into the array at that index.
  * @returns An array containing all of the results.
  */
-export function countMap<T>(count : number, callback :(index : number) => T) : T[] {
-  const result : T[] = [];
+export function countMap<T>(count: number, callback: (index: number) => T): T[] {
+  const result: T[] = [];
   for (let i = 0; i < count; i++) {
     result.push(callback(i));
   }
@@ -248,6 +248,42 @@ export function makeLinear(
   };
 }
 
-export function polarToRectangular(r : number, θ : number) {
-  return { x :Math.sin(θ) * r, y : Math.cos(θ) * r};
+/**
+ * Linear interpolation.
+ *
+ * Given two points, this function will find the line segment that connects the two points.
+ * @param x1 One valid input.
+ * @param y1 The expected output at x1.
+ * @param x2 Another valid input.
+ * @param y2 The expected output at x2.
+ * @returns A function that takes x as an input.
+ * If x is between x1 and x2, return the corresponding y from the line segment.
+ * Outside of the line segment, the function is flat.
+ * I.e. f(-Infinity) == f(min/(x1,x2) - 100) == f(min/(x1,x2)).
+ * And f(Infinity) == f(max/(x1,x2) + 100) == f(max/(x1,x2)).
+ */
+ export function makeBoundedLinear(
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number
+): LinearFunction {
+  if (x2 < x1) {
+    [x1, y1, x2, y2] = [x2, y2, x1, y1];
+  }
+  // Now x1 <= x2;
+  const slope = (y2 - y1) / (x2 - x1);
+  return function (x: number) {
+    if (x <= x1) {
+      return y1;
+    } else if (x >= x2) {
+      return y2;
+    } else {
+      return (x - x1) * slope + y1;
+    }
+  };
+}
+
+export function polarToRectangular(r: number, θ: number) {
+  return { x: Math.sin(θ) * r, y: Math.cos(θ) * r };
 }
