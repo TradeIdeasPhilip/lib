@@ -242,6 +242,7 @@ type LinearFunction = (x: number) => number;
  * @param x2 Another valid input.  Must differ from x2.
  * @param y2 The expected output at x2.
  * @returns A function of a line.  Give an x as input and it will return the expected y.
+ * ![Inputs and outputs of makeLinear()](https://raw.githubusercontent.com/TradeIdeasPhilip/lib/master/makeLinear.png)
  */
 export function makeLinear(
   x1: number,
@@ -266,8 +267,9 @@ export function makeLinear(
  * @returns A function that takes x as an input.
  * If x is between x1 and x2, return the corresponding y from the line segment.
  * Outside of the line segment, the function is flat.
- * I.e. f(-Infinity) == f(min/(x1,x2) - 100) == f(min/(x1,x2)).
- * And f(Infinity) == f(max/(x1,x2) + 100) == f(max/(x1,x2)).
+ * I.e. f(-Infinity) == f(min(x1,x2) - 100) == f(min(x1,x2)).
+ * And f(Infinity) == f(max(x1,x2) + 100) == f(max(x1,x2)).
+ * ![Inputs and outputs of makeBoundedLinear()](https://raw.githubusercontent.com/TradeIdeasPhilip/lib/master/makeBoundedLinear.png)
  */
  export function makeBoundedLinear(
   x1: number,
