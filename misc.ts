@@ -152,11 +152,18 @@ export function dateIsValid(date: Date): boolean {
  * element.innerText or anything that is not HTML, you need to use this constant.
  *
  * Google slides still treats this like a normal space. 🙁
+ * 
+ * ![Comparison of different types of spaces.](https://raw.githubusercontent.com/TradeIdeasPhilip/lib/master/space-sample.png)
  */
 export const NON_BREAKING_SPACE = "\xa0";
 
 /**
  * Looks like a space.  Is the width of a digit.
+ * 
+ * HTML completely ignores some “normal” spaces.
+ * HTML always draws a figure space.
+ * 
+ * ![Comparison of different types of spaces.](https://raw.githubusercontent.com/TradeIdeasPhilip/lib/master/space-sample.png)
  */
 export const FIGURE_SPACE = "\u2007";
 
