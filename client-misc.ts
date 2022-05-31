@@ -1,4 +1,4 @@
-import { makePromise } from "./misc.js";
+import { assertClass, makePromise } from "./misc.js";
 
 /**
  * This is a wrapper around document.getElementById().
@@ -130,4 +130,25 @@ export function getHashInfo(): Map<string, string> {
     }
   });
   return result;
+}
+
+/**
+ *
+ * @param htmlString A string to convert into an element.
+ * @param ty The type of the result.
+ * @returns The element that was created.
+ * @throws An `Error` if the new element is not of the given type.  Or if we couldn't create an element at all.
+ */
+export function createElementFromHTML<T extends object>(
+  htmlString: string,
+  ty: { new (): T }
+) {
+  // From https://stackoverflow.com/a/494348/971955
+  // From that SO question:
+  // It's unfortunate that these solutions are so indirect. I wish the standards committee would specify something similar like: var nodes = document.fromString("<b>Hello</b> <br>");
+  var div = document.createElement("div");
+  div.innerHTML = htmlString.trim();
+
+  // Change div.firstChild to div.childNodes to support multiple top-level nodes.
+  return assertClass(div.firstChild, ty, "createElementFromHTML:");
 }
