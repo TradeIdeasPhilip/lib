@@ -1,4 +1,35 @@
 /**
+ * Cast an object to a type.
+ * Check the type at runtime.
+ * @param item Check the type of this item.
+ * @param ty The expected type.  This should be a class.
+ * @param notes This will be included in the error message.
+ * @returns item
+ * @throws If the item is not of the correct type, throw an `Error` with a detailed message.
+ */
+export function assertClass<T extends object>(
+  item: unknown,
+  ty: { new (): T },
+  notes = "Assertion Failed."
+): T {
+  const failed = (typeFound: string) => {
+    throw new Error(
+      `${notes}  Expected type:  ${ty.name}.  Found type:  ${typeFound}.`
+    );
+  };
+  if (item === null) {
+    failed("null");
+  } else if (typeof item != "object") {
+    failed(typeof item);
+  } else if (!(item instanceof ty)) {
+    failed(item.constructor.name);
+  } else {
+    return item;
+  }
+  throw new Error("wtf");
+}
+
+/**
  * This is a wrapper around setTimeout() that works with await.
  *
  * `await sleep(100)`;
@@ -152,17 +183,17 @@ export function dateIsValid(date: Date): boolean {
  * element.innerText or anything that is not HTML, you need to use this constant.
  *
  * Google slides still treats this like a normal space. 🙁
- * 
+ *
  * ![Comparison of different types of spaces.](https://raw.githubusercontent.com/TradeIdeasPhilip/lib/master/space-sample.png)
  */
 export const NON_BREAKING_SPACE = "\xa0";
 
 /**
  * Looks like a space.  Is the width of a digit.
- * 
+ *
  * HTML completely ignores some “normal” spaces.
  * HTML always draws a figure space.
- * 
+ *
  * ![Comparison of different types of spaces.](https://raw.githubusercontent.com/TradeIdeasPhilip/lib/master/space-sample.png)
  */
 export const FIGURE_SPACE = "\u2007";
@@ -215,7 +246,10 @@ export function* count(start = 0, end = Infinity, step = 1) {
  * @param callback A function which will take the (zero based) array index as an input and will return the value to put into the array at that index.
  * @returns An array containing all of the results.
  */
-export function initializedArray<T>(count: number, callback: (index: number) => T): T[] {
+export function initializedArray<T>(
+  count: number,
+  callback: (index: number) => T
+): T[] {
   const result: T[] = [];
   for (let i = 0; i < count; i++) {
     result.push(callback(i));
@@ -276,7 +310,7 @@ export function makeLinear(
  * And f(Infinity) == f(max(x1,x2) + 100) == f(max(x1,x2)).
  * ![Inputs and outputs of makeBoundedLinear()](https://raw.githubusercontent.com/TradeIdeasPhilip/lib/master/makeBoundedLinear.png)
  */
- export function makeBoundedLinear(
+export function makeBoundedLinear(
   x1: number,
   y1: number,
   x2: number,
