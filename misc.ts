@@ -91,6 +91,92 @@ export function testXml(xmlStr: string): XmlStatus {
 }
 
 /**
+ * There are a lot of ways to convert a string to a number in JavaScript.
+ * And they are all slightly different!
+ *
+ * This is my preferred way to parse a number.  The base comes from the
+ * standard parseFloat command().  Any errors are reported as undefined,
+ * so you can choose to get rid of them with ??.
+ *
+ * I get rid of NaNs and infinities.  I don't think I every really send
+ * an infinity over the network or save it in a file.  These become
+ * undefined, just like errors.
+ * @param source The input to parse.
+ * @returns A finite number or undefined if the parse failed.
+ */
+export function parseFloatX(
+  source: string | undefined | null
+): number | undefined {
+  if (source === undefined || source === null) {
+    return undefined;
+  }
+  // TODO parseFloat is generally my favorite of the build it methods to
+  // convert to a number.  But "9x" and "9" both return 9.  In my C++
+  // version (and others) "9x" would fail.
+  const result = parseFloat(source);
+  if (isFinite(result)) {
+    return result;
+  } else {
+    return undefined;
+  }
+}
+
+/**
+ * There are a lot of ways to convert a string to a number in JavaScript.
+ * And they are all slightly different!
+ *
+ * I get rid of NaNs, infinities, numbers with a fraction, or integers
+ * that are too big to fit into JavaScript numbers.  These are all
+ * converted into undefined.
+ * @param source The input to parse
+ * @returns A finite integer or undefined if the parse failed.
+ */
+export function parseIntX(
+  source: string | undefined | null
+): number | undefined {
+  const result = parseFloatX(source);
+  if (result === undefined) {
+    return undefined;
+  } else if (
+    result > Number.MAX_SAFE_INTEGER ||
+    result < Number.MIN_SAFE_INTEGER ||
+    result != Math.floor(result)
+  ) {
+    return undefined;
+  } else {
+    return result;
+  }
+}
+
+/**
+ * Convert a number in time_t format into a JavaScript Date object.
+ * @param source The time in time_t format.  In Unix & C it's common to count the number of seconds past
+ * the Unix epoch as an integer.  As opposed to Java which counts the number of milliseconds past the
+ * Unix epoch as an integer, or JavaScript which counts the number of milliseconds past the epoch as
+ * a floating point number.  We interpret 0 was a way to say no value.
+ * @returns A `Date` if possible, or undefined on any error.
+ */
+export function parseTimeT(
+  source: string | number | undefined | null
+): Date | undefined {
+  if (typeof source === "string") {
+    source = parseIntX(source);
+  }
+  if (source === undefined || source === null) {
+    return undefined;
+  }
+  if (source <= 0) {
+    // 0 can be a valid date, but it is also often used to say no value.
+    // I'm choosing no value because it matches most of the data I read.
+    // I'm converting negative numbers into undefined just to be consistent;
+    // It would be weird if the 1 and -1 converted into times that were 
+    // 2 seconds apart, but 0 converted into an error.
+    return undefined;
+  }
+  return new Date(source * 1000);
+}
+
+/**
  * Pick any arbitrary element from the set.
  * @param set
  * @returns An item in the set.  Unless the set is empty, then it returns undefined.
