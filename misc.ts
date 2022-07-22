@@ -91,6 +91,82 @@ export function testXml(xmlStr: string): XmlStatus {
 }
 
 /**
+ * This is my preferred way to parse an XML document.  Any and all errors result in
+ * `undefined`.  `See testXml()` if you need better error messages.
+ * @param bytes The input as a string.  
+ * 
+ * If the input is undefined, immediately return undefined.  This makes it easy to
+ * propagate errors and only check for undefined once, at the end.
+ * @returns The root element of the resulting XML Document, or undefined in case of any errors.
+ */
+export function parseXml(bytes : string | undefined) : Element | undefined {
+  if (bytes === undefined) {
+    return undefined;
+  } else {
+    const parsed = testXml(bytes);
+    return parsed?.parsed?.documentElement;
+  }
+}
+
+/**
+ * Walk through a path into an XML (or similar) document.
+ * 
+ * Note that tag names must be unique.  If you have an element like
+ * ```
+ *   <parent>
+ *     <twin />
+ *     <twin />
+ *     <unique />
+ *   </parent>
+ * ```
+ * and you say `followPath(parent, "twin")` the result will be `undefined` because we don't know which twin to return.
+ * `followPath(parent, "unique")` will return the last child element.
+ * @param from Start from this element.
+ * @param path A list of instructions, like `0` to take the first child element or a string to look for an element with that tag name.
+ * @returns The requested `Element`, or `undefined` if there were any problems.
+ */
+export function followPath(from : Element | undefined, ...path : readonly (number | string)[]) : Element | undefined {
+  for (const transition of path) {
+    if (from === undefined) {
+      return undefined;
+    } else if (typeof transition === "number") {
+      // Element.children includes only element nodes.
+      from = from.children[transition];
+    } else {
+      const hasCorrectName = from.getElementsByTagName(transition);
+      if (hasCorrectName.length != 1) {
+        // Not found or ambiguous.
+        return undefined;
+      } else {
+        from = hasCorrectName[0];
+      }
+    }
+  }
+  return from;
+}
+
+/**
+ * 
+ * @param attributeName The name of the attribute we want to read.
+ * @param from Start the search from this `Element`.
+ * @param path We use `followPath()` to find an `Element` then we look for the attribute there.
+ * Leave this empty to look for the attribute directly in `from`.
+ * @returns The value of the attribute.  Or `undefined` if there are any problems.
+ */
+export function getAttribute(attributeName : string, from : Element | undefined, ...path : readonly (number |string)[]) : string | undefined {
+  from = followPath(from, ...path);
+  if (from === undefined) {
+    return undefined;
+  }
+  if (!from.hasAttribute(attributeName)) {
+    // MDN recommends explicitly checking for this.
+    // https://developer.mozilla.org/en-US/docs/Web/API/Element/getAttribute#non-existing_attributes
+    return undefined;
+  }
+  return from.getAttribute(attributeName)??undefined;
+}
+
+/**
  * There are a lot of ways to convert a string to a number in JavaScript.
  * And they are all slightly different!
  *
