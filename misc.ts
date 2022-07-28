@@ -253,6 +253,26 @@ export function parseTimeT(
 }
 
 /**
+ * Parse the entire body of a CSV file at once.
+ * @param data An entire CSV file.
+ * @returns An array, one element per line.  Each element is a sub array, one element per column.
+ */
+export const csvStringToArray = (data : string) => {
+  // Source:
+  // https://gist.github.com/Jezternz/c8e9fafc2c114e079829974e3764db75?permalink_comment_id=3457862#gistcomment-3457862
+  const re = /(,|\r?\n|\r|^)(?:"([^"]*(?:""[^"]*)*)"|([^,\r\n]*))/gi
+  const result : string[][] = [[]]
+  let matches
+  while ((matches = re.exec(data))) {
+    if (matches[1].length && matches[1] !== ',') result.push([])
+    result[result.length - 1].push(
+      matches[2] !== undefined ? matches[2].replace(/""/g, '"') : matches[3]
+    )
+  }
+  return result
+}
+
+/**
  * Pick any arbitrary element from the set.
  * @param set
  * @returns An item in the set.  Unless the set is empty, then it returns undefined.
