@@ -1,8 +1,9 @@
 # Blazingly fast TypeScript library
 
 This library available as a git submodule so it's easy for me to edit this while I'm working on various main programs.
+See [phil-lib](https://github.com/TradeIdeasPhilip/phil-lib) for the same functionality in an `npm` package.
 
-This works well with [Vite](https://vitejs.dev/).
+This submodule structure works well with [Vite](https://vitejs.dev/).
 When [I tried creating a similar library without a build tool](https://github.com/TradeIdeasPhilip/library), I ran into lots of problems.
 ## Adding to a new project
 To import this library into a new project:
